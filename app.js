@@ -91,6 +91,7 @@ const state = {
 
   // Input
   keys: {},
+  mobMoveDir: 0,
   isDragging: false,
   pointerDownX: 0,
   pointerDownY: 0,
@@ -124,6 +125,8 @@ const dom = {
   exitDoorPrompt: document.getElementById("exit-door-prompt"),
   btnOpenExitDoor: document.getElementById("btn-open-exit-door"),
   hudTop: document.getElementById("hud-top"),
+  hudFilterCard: document.getElementById("hud-filter-card"),
+  btnMobFilters: document.getElementById("btn-mob-filters"),
   btnReturnStart: document.getElementById("btn-return-start"),
   colorSelect: document.getElementById("color-scheme-select"),
   distributionBar: document.getElementById("distribution-bar"),
@@ -153,6 +156,10 @@ const dom = {
   minimapWrapper: document.getElementById("minimap-wrapper"),
   minimapCanvas: document.getElementById("minimap-canvas"),
   btnToggleTopdown: document.getElementById("btn-toggle-topdown"),
+  mobileNavControls: document.getElementById("mobile-nav-controls"),
+  btnMobForward: document.getElementById("btn-mob-forward"),
+  btnMobBack: document.getElementById("btn-mob-back"),
+  btnMobMap: document.getElementById("btn-mob-map"),
   topdownBanner: document.getElementById("topdown-banner"),
   btnExitTopdown: document.getElementById("btn-exit-topdown"),
   personDrawer: document.getElementById("person-drawer"),
@@ -318,12 +325,13 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color("#0b0d11");
 scene.fog = new THREE.FogExp2("#0b0d11", 0.0175);
 
-const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 240);
+const initialAspect = window.innerWidth / window.innerHeight;
+const camera = new THREE.PerspectiveCamera(initialAspect < 1 ? 68 : 58, initialAspect, 0.1, 240);
 camera.position.set(0, EYE_HEIGHT, START_OUTSIDE_Z);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth <= 900 ? 1.5 : 2));
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.12;
 dom.sceneContainer.appendChild(renderer.domElement);
@@ -1339,6 +1347,7 @@ function returnToStart(showIntroCover = false) {
       dom.hudTop.classList.add("hidden");
       dom.narrativePanel.classList.add("hidden");
       dom.minimapWrapper.classList.add("hidden");
+      if (dom.mobileNavControls) dom.mobileNavControls.classList.add("hidden");
       dom.doorPrompt.classList.add("hidden");
     } else {
       updateNarrativeForPosition();
@@ -1441,6 +1450,7 @@ function setTopdownMode(enabled) {
   dom.topdownBanner.classList.toggle("hidden", !enabled);
   dom.narrativePanel.classList.toggle("hidden", enabled);
   dom.minimapWrapper.classList.toggle("hidden", enabled);
+  if (dom.mobileNavControls) dom.mobileNavControls.classList.toggle("hidden", enabled);
   dom.btnToggleTopdown.textContent = enabled ? "Caminhar" : "Vista aérea";
   if (enabled) dom.doorPrompt.classList.add("hidden");
 }
@@ -1561,8 +1571,10 @@ function handlePointerMove(e) {
     if (Math.hypot(e.clientX - state.pointerDownX, e.clientY - state.pointerDownY) > 5) {
       state.pointerMoved = true;
     }
-    state.targetYaw += dx * 0.0042;
-    state.targetPitch = Math.max(-0.42, Math.min(0.45, state.targetPitch + dy * 0.003));
+    const yawSens = e.pointerType === "touch" ? 0.0058 : 0.0042;
+    const pitchSens = e.pointerType === "touch" ? 0.004 : 0.003;
+    state.targetYaw += dx * yawSens;
+    state.targetPitch = Math.max(-0.42, Math.min(0.45, state.targetPitch + dy * pitchSens));
     state.lastPointerX = e.clientX;
     state.lastPointerY = e.clientY;
     dom.hoverTooltip.classList.add("hidden");
@@ -1654,6 +1666,7 @@ function startExperience(openListImmediately = false) {
   dom.hudTop.classList.remove("hidden");
   dom.narrativePanel.classList.remove("hidden");
   dom.minimapWrapper.classList.remove("hidden");
+  if (dom.mobileNavControls) dom.mobileNavControls.classList.remove("hidden");
   startAmbientMusic();
   updateNarrativeForPosition();
 
@@ -1731,6 +1744,39 @@ if (dom.audioVolume) {
   dom.audioVolume.addEventListener("input", (e) => setMusicVolumeFromSlider(e.target.value));
 }
 
+// Controles exclusivos mobile (filtros recolhíveis, caminhada tátil e vista aérea)
+if (dom.btnMobFilters && dom.hudFilterCard) {
+  dom.btnMobFilters.addEventListener("click", () => {
+    const isOpen = dom.hudFilterCard.classList.toggle("mobile-open");
+    dom.btnMobFilters.classList.toggle("active", isOpen);
+    dom.btnMobFilters.setAttribute("aria-expanded", String(isOpen));
+  });
+}
+
+function bindHoldWalkButton(btn, dir) {
+  if (!btn) return;
+  const startHold = (e) => {
+    e.preventDefault();
+    state.mobMoveDir = dir;
+    btn.classList.add("pressed");
+  };
+  const stopHold = () => {
+    if (state.mobMoveDir === dir) state.mobMoveDir = 0;
+    btn.classList.remove("pressed");
+  };
+  btn.addEventListener("pointerdown", startHold);
+  btn.addEventListener("pointerup", stopHold);
+  btn.addEventListener("pointercancel", stopHold);
+  btn.addEventListener("pointerleave", stopHold);
+}
+
+bindHoldWalkButton(dom.btnMobForward, 1);
+bindHoldWalkButton(dom.btnMobBack, -1);
+
+if (dom.btnMobMap) {
+  dom.btnMobMap.addEventListener("click", () => setTopdownMode(!state.topdown));
+}
+
 // Scroll do mouse para caminhar para frente e para trás
 renderer.domElement.addEventListener(
   "wheel",
@@ -1787,8 +1833,11 @@ window.addEventListener("keyup", (e) => {
 });
 
 window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
+  const aspect = window.innerWidth / window.innerHeight;
+  camera.aspect = aspect;
+  camera.fov = aspect < 1 ? 68 : 58;
   camera.updateProjectionMatrix();
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth <= 900 ? 1.5 : 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
@@ -1885,8 +1934,8 @@ function animate() {
     const turnSpeed = 1.65 * dt;
     let forward = 0;
 
-    if (state.keys.ArrowUp || state.keys.KeyW) forward += 1;
-    if (state.keys.ArrowDown || state.keys.KeyS) forward -= 1;
+    if (state.keys.ArrowUp || state.keys.KeyW || state.mobMoveDir > 0) forward += 1;
+    if (state.keys.ArrowDown || state.keys.KeyS || state.mobMoveDir < 0) forward -= 1;
     if (state.keys.ArrowLeft || state.keys.KeyA) state.targetYaw += turnSpeed;
     if (state.keys.ArrowRight || state.keys.KeyD) state.targetYaw -= turnSpeed;
 

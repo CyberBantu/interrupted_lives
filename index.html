@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0d11" />
   <title>Vidas Interrompidas · Memorial Interativo · Rio de Janeiro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -85,6 +86,9 @@
         <span><kbd>Arrastar</kbd> ou <kbd>←</kbd><kbd>→</kbd> olhar</span>
         <span><kbd>Clique</kbd> abrir história</span>
         <span><kbd>Espaço</kbd> mapa aéreo</span>
+      </div>
+      <div class="intro-controls-mobile">
+        <span>Arraste a tela para olhar · Segure ↑ ↓ para caminhar · Toque para abrir cada história</span>
       </div>
     </div>
   </section>
@@ -193,7 +197,7 @@
   <!-- HUD SUPERIOR -->
   <header id="hud-top" class="hud-top hidden">
     <!-- Painel de Filtro / Cores (Superior Esquerdo) -->
-    <aside class="hud-filter-card">
+    <aside id="hud-filter-card" class="hud-filter-card">
       <div class="hud-filter-header">
         <label for="color-scheme-select" class="hud-label">Colorir pessoas por</label>
         <select id="color-scheme-select" class="hud-select">
@@ -215,8 +219,12 @@
 
     <!-- Ações (Superior Direito) -->
     <nav class="hud-actions" aria-label="Ações do memorial">
+      <button id="btn-mob-filters" class="hud-btn mobile-only-btn" title="Filtrar cores" aria-expanded="false">
+        <span>Filtros</span>
+      </button>
       <button id="btn-return-start" class="hud-btn hud-btn-return hidden" title="Voltar para a entrada do memorial">
-        <span>↺ Voltar ao início</span>
+        <span class="return-label-desktop">↺ Voltar ao início</span>
+        <span class="return-label-mobile">↺ Início</span>
       </button>
       <button id="btn-cases" class="hud-btn" title="Listar todos os 56 casos catalogados">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -287,6 +295,23 @@
     <canvas id="minimap-canvas" width="265" height="128"></canvas>
     <div class="minimap-footer" id="minimap-footer">Clique no mapa ou pressione Espaço</div>
   </aside>
+
+  <!-- CONTROLES DE NAVEGAÇÃO MOBILE (INFERIOR DIREITO) -->
+  <div id="mobile-nav-controls" class="mobile-nav-controls hidden" aria-label="Controles de caminhada">
+    <button id="btn-mob-forward" class="mob-nav-btn mob-nav-primary" aria-label="Caminhar para frente" title="Segure para avançar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+        <path d="M12 19V5M5 12l7-7 7 7" />
+      </svg>
+    </button>
+    <button id="btn-mob-back" class="mob-nav-btn" aria-label="Caminhar para trás" title="Segure para recuar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+        <path d="M12 5v14M19 12l-7 7-7-7" />
+      </svg>
+    </button>
+    <button id="btn-mob-map" class="mob-nav-btn mob-nav-map" aria-label="Alternar vista aérea" title="Mapa aéreo">
+      <span>Mapa</span>
+    </button>
+  </div>
 
   <!-- OVERLAY DE VISTA AÉREA (TOPDOWN) -->
   <div id="topdown-banner" class="topdown-banner hidden">
