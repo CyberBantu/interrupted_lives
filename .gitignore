@@ -1,0 +1,15 @@
+# Dependências e logs
+node_modules/
+npm-debug.log*
+*.log
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ambiente e editores
+.env
+.env.local
+.vscode/
+.idea/

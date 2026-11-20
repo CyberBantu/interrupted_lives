@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vidas Interrompidas · Memorial Interativo · Rio de Janeiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://esm.sh/three@0.170.0",
+        "three/addons/": "https://esm.sh/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <!-- TRANSIÇÃO VISUAL SIMPLES DA PORTA (ENTRADA E SAÍDA) -->
+  <div id="door-transition" class="door-transition" aria-hidden="true">
+    <div class="door-transition-inner">
+      <div class="door-transition-arch">
+        <div class="door-transition-leaf"></div>
+      </div>
+      <span id="door-transition-text" class="door-transition-text">Atravessando a porta...</span>
+    </div>
+  </div>
+
+  <!-- TELA INICIAL EDITORIAL -->
+  <section id="intro-screen" class="intro-screen" aria-label="Apresentação do Memorial">
+    <div class="intro-bg">
+      <img src="./assets/photos/hero-rio-memorial.jpg" alt="Memorial à luz de velas no Rio de Janeiro ao entardecer" />
+      <div class="intro-scrim"></div>
+    </div>
+
+    <div class="intro-content">
+      <div class="intro-eyebrow">
+        <span class="pulse-dot"></span>
+        MEMORIAL INTERATIVO 3D · RIO DE JANEIRO
+      </div>
+
+      <h1 class="intro-title">Vidas Interrompidas</h1>
+
+      <p class="intro-lead">
+        Por trás de cada estatística da violência armada no Rio de Janeiro existe um nome, uma idade e um trajeto interrompido.
+        Atravesse uma única porta para caminhar por um corredor tridimensional que reúne <strong>56 casos reais catalogados</strong>, dos 3 aos 73 anos.
+      </p>
+
+      <div class="intro-metrics">
+        <div class="metric-card">
+          <span class="metric-value">56</span>
+          <span class="metric-label">Casos reais catalogados até o momento</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-value">3 a 73</span>
+          <span class="metric-label">Faixa de idades ao longo do corredor</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-value">2018 a 2026</span>
+          <span class="metric-label">Registros do Fogo Cruzado e imprensa</span>
+        </div>
+      </div>
+
+      <div class="collection-notice">
+        <span class="collection-notice-dot"></span>
+        <span>O processo de coleta de mais informações ainda está em andamento.</span>
+      </div>
+
+      <div class="intro-actions">
+        <button id="btn-enter-memorial" class="btn-primary">
+          <span>Aproximar-se da porta</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M13 5l7 7-7 7" />
+          </svg>
+        </button>
+        <button id="btn-intro-list" class="btn-secondary">
+          Ver os 56 casos catalogados
+        </button>
+      </div>
+
+      <div class="intro-controls-strip">
+        <span><kbd>Scroll</kbd> ou <kbd>↑</kbd><kbd>↓</kbd> caminhar</span>
+        <span><kbd>Arrastar</kbd> ou <kbd>←</kbd><kbd>→</kbd> olhar</span>
+        <span><kbd>Clique</kbd> abrir história</span>
+        <span><kbd>Espaço</kbd> mapa aéreo</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TELA FINAL (AO SAIR DO OUTRO LADO DA PORTA) -->
+  <section id="outro-screen" class="outro-screen hidden" aria-label="Mensagem final do Memorial">
+    <div class="intro-bg">
+      <img src="./assets/photos/narrative-memoria.jpg" alt="Vigília à luz de velas em memória das vítimas" />
+      <div class="intro-scrim"></div>
+    </div>
+
+    <div class="outro-content">
+      <div class="intro-eyebrow">
+        <span class="pulse-dot"></span>
+        ALÉM DA PORTA · MEMÓRIA E FUTURO
+      </div>
+
+      <h2 class="outro-title">Nenhuma vida cabe apenas em uma estatística</h2>
+
+      <p class="outro-lead">
+        Você atravessou o corredor dos 3 aos 73 anos. Cada pessoa que caminhava naquele espaço tinha uma rotina, uma família, sonhos e um destino interrompido pela violência armada no Rio de Janeiro.
+      </p>
+
+      <p class="outro-body">
+        Das crianças atingidas enquanto brincavam em casa ou voltavam da escola aos trabalhadores e idosos surpreendidos no fogo cruzado, estas <strong>56 histórias catalogadas</strong> representam apenas uma fração de milhares de famílias fluminenses que transformam a dor do luto em busca por justiça, memória e direito à vida.
+      </p>
+
+      <div class="outro-quote">
+        Não são números. São nomes. São histórias.
+      </div>
+
+      <div class="collection-notice">
+        <span class="collection-notice-dot"></span>
+        <span>O processo de coleta de mais informações ainda está em andamento.</span>
+      </div>
+
+      <!-- FICHA TÉCNICA E REFERÊNCIAS NO FINAL -->
+      <div class="outro-credits">
+        <div class="outro-credits-header">
+          <span class="outro-credits-line"></span>
+          <span class="outro-credits-eyebrow">Referências & Créditos</span>
+          <span class="outro-credits-line"></span>
+        </div>
+
+        <div class="outro-credits-grid">
+          <a href="https://pudding.cool/2026/10/lifeafter/" target="_blank" rel="noopener noreferrer" class="credit-card credit-card-link">
+            <span class="credit-card-tag">Inspiração Visual</span>
+            <strong class="credit-card-title">Life After · The Pudding ↗</strong>
+            <span class="credit-card-sub">Conceito base de navegação espacial e visualização humana</span>
+          </a>
+
+          <a href="https://fogocruzado.org.br/" target="_blank" rel="noopener noreferrer" class="credit-card credit-card-link">
+            <span class="credit-card-tag">Fontes & Monitoramento</span>
+            <strong class="credit-card-title">Instituto Fogo Cruzado ↗</strong>
+            <span class="credit-card-sub">Futuro Exterminado, G1 Rio, Agência Brasil, UOL e Redes da Maré</span>
+          </a>
+
+          <div class="credit-card">
+            <span class="credit-card-tag">Trilha Sonora Ambiente</span>
+            <strong class="credit-card-title">Milton Nascimento</strong>
+            <span class="credit-card-sub">Música "Francisco"</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro-actions">
+        <button id="btn-outro-back" class="btn-secondary">
+          <span>← Voltar ao corredor</span>
+        </button>
+        <button id="btn-outro-restart" class="btn-primary">
+          <span>Voltar ao início</span>
+        </button>
+        <button id="btn-outro-cases" class="btn-secondary">
+          <span>Consultar catálogo (56 casos)</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CENA 3D PRINCIPAL -->
+  <div id="scene-container" class="scene-container" aria-label="Ambiente 3D do Memorial"></div>
+
+  <!-- TOOLTIP FLUTUANTE AO PASSAR O MOUSE -->
+  <div id="hover-tooltip" class="hover-tooltip hidden" role="status" aria-live="polite">
+    <div class="tooltip-name" id="tooltip-name"></div>
+    <div class="tooltip-meta" id="tooltip-meta"></div>
+    <div class="tooltip-cta">Clique para ler a história</div>
+  </div>
+
+  <!-- PROMPT DA PORTA DE ENTRADA -->
+  <div id="door-prompt" class="door-prompt hidden">
+    <button id="btn-open-door" class="door-cta-btn">
+      <span class="door-cta-icon">↳</span>
+      <span>Abrir a porta e entrar no memorial</span>
+    </button>
+  </div>
+
+  <!-- PROMPT DA PORTA DE SAÍDA (FUNDO DO CORREDOR) -->
+  <div id="exit-door-prompt" class="door-prompt hidden">
+    <button id="btn-open-exit-door" class="door-cta-btn">
+      <span class="door-cta-icon">↳</span>
+      <span>Atravessar a porta de saída</span>
+    </button>
+  </div>
+
+  <!-- HUD SUPERIOR -->
+  <header id="hud-top" class="hud-top hidden">
+    <!-- Painel de Filtro / Cores (Superior Esquerdo) -->
+    <aside class="hud-filter-card">
+      <div class="hud-filter-header">
+        <label for="color-scheme-select" class="hud-label">Colorir pessoas por</label>
+        <select id="color-scheme-select" class="hud-select">
+          <option value="circumstance">Circunstância da morte</option>
+          <option value="region">Região do Rio</option>
+          <option value="locationType">Onde a vítima estava</option>
+          <option value="ageGroup">Faixa etária</option>
+        </select>
+      </div>
+      <div id="distribution-bar" class="distribution-bar" aria-label="Distribuição proporcional"></div>
+      <div id="legend-list" class="legend-list"></div>
+    </aside>
+
+    <!-- Indicador de Idade no Corredor (Topo Centro) -->
+    <div id="age-pill" class="age-pill hidden">
+      <span class="age-pill-label" id="age-pill-label">FAIXA NO CORREDOR</span>
+      <span class="age-pill-value" id="age-pill-value">3 anos</span>
+    </div>
+
+    <!-- Ações (Superior Direito) -->
+    <nav class="hud-actions" aria-label="Ações do memorial">
+      <button id="btn-return-start" class="hud-btn hud-btn-return hidden" title="Voltar para a entrada do memorial">
+        <span>↺ Voltar ao início</span>
+      </button>
+      <button id="btn-cases" class="hud-btn" title="Listar todos os 56 casos catalogados">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
+          <circle cx="3.5" cy="6" r="1.5" fill="currentColor" /><circle cx="3.5" cy="12" r="1.5" fill="currentColor" /><circle cx="3.5" cy="18" r="1.5" fill="currentColor" />
+        </svg>
+        <span>Casos (56)</span>
+      </button>
+      <div class="hud-audio-pill" id="hud-audio-pill">
+        <button id="btn-audio" class="hud-audio-toggle" aria-pressed="false" title="Ativar ou pausar música ambiente">
+          <span class="audio-icon-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <line id="audio-mute-line" x1="23" y1="9" x2="17" y2="15" />
+              <line id="audio-mute-line-2" x1="17" y1="9" x2="23" y2="15" />
+            </svg>
+            <span class="eq-bars" id="audio-eq-bars" aria-hidden="true">
+              <i></i><i></i><i></i>
+            </span>
+          </span>
+          <span class="audio-track-meta">
+            <span class="audio-track-title">Som</span>
+            <span class="audio-track-sub" id="btn-audio-label">Pausado</span>
+          </span>
+        </button>
+        <div class="audio-slider-wrap">
+          <input id="audio-volume" class="audio-slider" type="range" min="0" max="100" value="20" aria-label="Regular volume do som ambiente" />
+          <span id="audio-vol-label" class="audio-vol-label">20%</span>
+        </div>
+      </div>
+
+      <button id="btn-about" class="hud-btn" title="Sobre o projeto e referências">
+        <span>Sobre</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- COLUNA INFERIOR ESQUERDA: TEXTO DO PERCURSO ACIMA DO MINIMAPA -->
+  <section id="narrative-panel" class="narrative-panel hidden" aria-live="polite">
+    <div class="narrative-card">
+      <div class="narrative-top-row">
+        <span class="narrative-badge" id="narrative-badge">PERCURSO</span>
+        <button id="btn-free-explore" class="narrative-toggle-btn" title="Ocultar ou mostrar narração guiada">
+          Ocultar
+        </button>
+      </div>
+
+      <div id="narrative-body" class="narrative-body">
+        <div id="narrative-media-wrap" class="narrative-media-wrap hidden">
+          <img id="narrative-photo" alt="" />
+          <p id="narrative-photo-caption" class="narrative-photo-caption"></p>
+        </div>
+
+        <div id="narrative-chart-wrap" class="narrative-chart-wrap hidden"></div>
+
+        <p id="narrative-text" class="narrative-text"></p>
+        <div id="narrative-hint" class="narrative-hint"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MINIMAPA / VISTA AÉREA (INFERIOR ESQUERDO, ABAIXO DO TEXTO) -->
+  <aside id="minimap-wrapper" class="minimap-wrapper hidden" aria-label="Mapa do corredor">
+    <div class="minimap-header">
+      <span class="minimap-title" id="minimap-title">Mapa do corredor</span>
+      <button id="btn-toggle-topdown" class="minimap-mode-btn">Vista aérea</button>
+    </div>
+    <canvas id="minimap-canvas" width="265" height="128"></canvas>
+    <div class="minimap-footer" id="minimap-footer">Clique no mapa ou pressione Espaço</div>
+  </aside>
+
+  <!-- OVERLAY DE VISTA AÉREA (TOPDOWN) -->
+  <div id="topdown-banner" class="topdown-banner hidden">
+    <div class="topdown-banner-text">
+      <strong>Vista Aérea do Memorial:</strong> Clique em qualquer ponto iluminado para ler o caso, ou clique no corredor para caminhar até lá.
+    </div>
+    <button id="btn-exit-topdown" class="btn-primary btn-sm">Voltar a caminhar</button>
+  </div>
+
+  <!-- GAVETA ESQUERDA: DOSSIÊ DA VÍTIMA -->
+  <aside id="person-drawer" class="drawer drawer-left" aria-hidden="true" aria-label="Detalhes do caso">
+    <button id="btn-close-person" class="drawer-close" aria-label="Fechar dossiê">✕</button>
+
+    <div class="person-hero">
+      <img id="person-photo" src="./assets/photos/narrative-memoria.jpg" alt="" />
+      <div class="person-hero-scrim"></div>
+      <div class="person-hero-badges">
+        <span id="person-age-badge" class="pill-age"></span>
+        <span id="person-date-badge" class="pill-date"></span>
+      </div>
+      <div class="person-hero-title-wrap">
+        <span id="person-circumstance-pill" class="circumstance-pill"></span>
+        <h2 id="person-name" class="person-name"></h2>
+        <p id="person-location" class="person-location"></p>
+      </div>
+    </div>
+
+    <div class="person-body">
+      <div class="person-meta-grid">
+        <div class="meta-box">
+          <span class="meta-box-label">Região</span>
+          <span id="person-region" class="meta-box-value"></span>
+        </div>
+        <div class="meta-box">
+          <span class="meta-box-label">Local do ocorrido</span>
+          <span id="person-location-type" class="meta-box-value"></span>
+        </div>
+      </div>
+
+      <div class="person-section">
+        <h3>O que aconteceu</h3>
+        <p id="person-summary"></p>
+      </div>
+
+      <div class="person-section">
+        <h3>Contexto e repercussão</h3>
+        <p id="person-context"></p>
+      </div>
+
+      <div class="person-source">
+        <span>Canais de notícia e fontes:</span>
+        <div id="person-source-text" class="source-outlet-chips"></div>
+      </div>
+    </div>
+
+    <div class="person-footer">
+      <button id="btn-prev-case" class="nav-case-btn">← Anterior</button>
+      <span id="person-counter" class="person-counter">1 / 56</span>
+      <button id="btn-next-case" class="nav-case-btn">Próximo →</button>
+    </div>
+  </aside>
+
+  <!-- GAVETA DIREITA: LISTA DOS 56 CASOS -->
+  <aside id="cases-drawer" class="drawer drawer-right" aria-hidden="true" aria-label="Lista de casos catalogados">
+    <div class="drawer-header">
+      <div>
+        <span class="drawer-eyebrow">CATÁLOGO DO MEMORIAL</span>
+        <h2>56 Casos Catalogados</h2>
+      </div>
+      <button id="btn-close-cases" class="drawer-close-inline" aria-label="Fechar lista">✕</button>
+    </div>
+
+    <div class="cases-search-wrap">
+      <input id="cases-search" type="search" placeholder="Buscar por nome, bairro ou circunstância..." />
+    </div>
+
+    <div id="cases-list" class="cases-list"></div>
+  </aside>
+
+  <!-- GAVETA DIREITA: SOBRE / REFERÊNCIAS -->
+  <aside id="about-drawer" class="drawer drawer-right" aria-hidden="true" aria-label="Sobre o projeto e referências">
+    <div class="drawer-header">
+      <div>
+        <span class="drawer-eyebrow">REFERÊNCIAS, METODOLOGIA & FONTES</span>
+        <h2>Sobre este projeto</h2>
+      </div>
+      <button id="btn-close-about" class="drawer-close-inline" aria-label="Fechar sobre">✕</button>
+    </div>
+
+    <div class="about-body">
+      <p>
+        <strong>Vidas Interrompidas · Rio de Janeiro</strong> é um memorial interativo em 3D que combina narrativa espacial, visualização de dados e documentação jornalística sobre vítimas da violência armada na Região Metropolitana do Rio.
+      </p>
+
+      <h3>Site base de inspiração</h3>
+      <ul class="about-list">
+        <li>
+          Conceito espacial e mecânica de navegação 3D inspirados no ensaio visual
+          <a href="https://pudding.cool/2026/10/lifeafter/" target="_blank" rel="noopener noreferrer" style="color:var(--amber)">Life After (The Pudding, 2026) ↗</a>,
+          reconstruído com arquitetura de porta única, paleta editorial própria e foco na memória das vítimas do Rio de Janeiro.
+        </li>
+      </ul>
+
+      <h3>Trilha sonora</h3>
+      <ul class="about-list">
+        <li>
+          Música <strong>"Francisco"</strong>, de <strong>Milton Nascimento</strong>.
+        </li>
+      </ul>
+
+      <h3>Fontes documentais e dados</h3>
+      <ul class="about-list">
+        <li><a href="https://fogocruzado.org.br/" target="_blank" rel="noopener noreferrer" style="color:var(--amber)">Instituto Fogo Cruzado ↗</a> e plataforma <a href="https://futuroexterminado.com.br/" target="_blank" rel="noopener noreferrer" style="color:var(--amber)">Futuro Exterminado ↗</a></li>
+        <li>Reportagens catalogadas de <strong>G1 Rio</strong>, <strong>Agência Brasil</strong>, <strong>UOL</strong>, <strong>CNN Brasil</strong>, <strong>Projeto Colabora</strong> e <strong>Redes da Maré</strong></li>
+        <li>Registros públicos do Ministério Público do RJ e relatórios de direitos humanos</li>
+      </ul>
+
+      <h3>Como navegar</h3>
+      <ul class="about-list">
+        <li><strong>Entrar e sair:</strong> clique na porta de entrada para iniciar o percurso, use o botão <code>Voltar ao início</code> a qualquer momento ou atravesse a porta de saída ao final do corredor.</li>
+        <li><strong>Caminhar:</strong> use o scroll do mouse, setas <code>↑</code> / <code>↓</code> ou teclas <code>W</code> / <code>S</code>.</li>
+        <li><strong>Olhar ao redor:</strong> clique e arraste na tela, ou use <code>←</code> / <code>→</code> (ou <code>A</code> / <code>D</code>).</li>
+        <li><strong>Inspecionar pessoa:</strong> clique em qualquer figura iluminada para abrir o dossiê completo e os links catalogados.</li>
+        <li><strong>Vista aérea:</strong> pressione <code>Espaço</code> ou clique no minimapa no canto inferior esquerdo.</li>
+      </ul>
+
+      <p class="about-note">
+        Nota: As fotografias editoriais utilizadas na ambientação são composições documentais simbólicas em respeito à privacidade e memória das famílias.
+      </p>
+    </div>
+  </aside>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
